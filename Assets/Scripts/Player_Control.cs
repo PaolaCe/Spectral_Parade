@@ -23,25 +23,37 @@ public class Player_Control : MonoBehaviour
     Vector3 velocity;
     bool tocaPiso;
 
+    Animator anim; //
+
     private void Start()
     {
         controller = GetComponent<CharacterController>();
         camara = GameObject.FindGameObjectWithTag("MainCamera");
-
+        anim = GetComponentInChildren<Animator>(); //
     }
 
     private void Update()
     {
         tocaPiso = Physics.CheckSphere(detectaPiso.position, distanciaPiso, mascaraPiso);
-        if(tocaPiso && velocity.y < 0)
+
+        if (tocaPiso && velocity.y < 0)
         {
             velocity.y = -2f;
+            anim.SetBool("salto",false);//
 
         }
 
-        if(Input.GetButtonDown("Jump")&& tocaPiso)
+        if (!tocaPiso) // wachar aqui que pdo con este if porque le da el telele
+        {
+        anim.SetBool("salto",true); //
+        } // este mero
+
+
+
+        if (Input.GetButtonDown("Jump")&& tocaPiso)
         {
             velocity.y = Mathf.Sqrt(alturadeSalto * -2 * gravedad);
+            anim.SetBool("salto", true);//
         }
 
         velocity.y += gravedad * Time.deltaTime;
@@ -50,6 +62,12 @@ public class Player_Control : MonoBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
         Vector3 direccion = new Vector3(horizontal, 0f, vertical).normalized;
+
+       if(direccion.magnitude <= 0)
+        {
+            anim.SetFloat("Movimientos", 0, 0.1f, Time.deltaTime);
+        }
+
 
         if(direccion.magnitude >= 0.01f)
         {
@@ -61,13 +79,15 @@ public class Player_Control : MonoBehaviour
             {
                 Vector3 mover = Quaternion.Euler(0, objetivoAngulo, 0) * Vector3.forward;
                 controller.Move(mover.normalized * velCorriendo * Time.deltaTime);
+                anim.SetFloat("Movimientos", 0.5f,0.1f, Time.deltaTime); //
             }
             else
             {
                 Vector3 mover = Quaternion.Euler(0, objetivoAngulo, 0) * Vector3.forward;
                  controller.Move(mover.normalized * velocidad * Time.deltaTime);
             }
-           
+
+            anim.SetFloat("Movimientos", 0.5f, 0.1f, Time.deltaTime); //
         }
    
        if (Input.anyKeyDown)
