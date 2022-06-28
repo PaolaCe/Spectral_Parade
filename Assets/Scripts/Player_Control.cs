@@ -56,7 +56,8 @@ public class Player_Control : MonoBehaviour
             anim.SetBool("salto", true);//
         }
 
-        velocity.y += gravedad * Time.deltaTime;
+         velocity.y += gravedad * Time.deltaTime;
+  
         controller.Move(velocity * Time.deltaTime);
 
         float horizontal = Input.GetAxisRaw("Horizontal");
